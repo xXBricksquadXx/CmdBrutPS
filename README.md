@@ -1,26 +1,42 @@
 # CmdBrutPS
 
-Neo‑brutalist command lookup for PowerShell.
+Neo‑brutalist command lookup for PowerShell: **offline TLDR cheatsheets** plus **local PowerShell help**.
 
-- **TLDR (offline)**: fast command cheatsheets from a local `tldr/pages/**` checkout (installed to a cache on first run).
-- **PowerShell (local)**: search `Get-Command` and view docs via `Get-Help`.
+**GitHub About (paste-ready):** Offline-first PowerShell command lookup that searches TLDR pages or local Get-Command output and renders docs via TLDR markdown or Get-Help.
 
-## What you get
+---
 
-### Commands
+## What this is
 
-- `Find-CmdBrut` — search commands (TLDR index or PowerShell commands)
-- `Get-CmdBrutDoc` — show docs (TLDR markdown or `Get-Help -Full` output)
-- `Update-CmdBrutData` — install/update TLDR pages **from a zip or folder** and rebuild a local index
+CmdBrutPS is a PowerShell module that gives you a fast, minimal UI for:
+- finding commands (either TLDR pages or PowerShell commands)
+- reading docs (TLDR markdown or `Get-Help -Full`)
+- keeping an offline TLDR cache updated on your machine
 
-### Offline-first storage
+CmdBrutPS keeps data **out of the repo** by default and uses a local cache so it works when you’re offline.
 
-CmdBrutPS stores its local cache here:
+---
+
+## Commands
+
+- **`Find-CmdBrut`** — search commands (TLDR index or PowerShell commands)
+- **`Get-CmdBrutDoc`** — show docs (TLDR markdown or `Get-Help -Full`)
+- **`Update-CmdBrutData`** — install/update TLDR pages from a **zip or folder** and rebuild a local index
+
+---
+
+## Offline-first cache
+
+CmdBrutPS stores its local TLDR pages + search index here:
 
 - `%LOCALAPPDATA%\CmdBrutPS\tldr\pages\...`
 - `%LOCALAPPDATA%\CmdBrutPS\index.json`
 
-## Install (from source repo)
+If you want to reset everything, you can delete `%LOCALAPPDATA%\CmdBrutPS\` and rebuild with `Update-CmdBrutData`.
+
+---
+
+## Install (from this repo)
 
 From the repo root:
 
@@ -32,11 +48,11 @@ Import-Module (Resolve-Path .\src\CmdBrutPS\CmdBrutPS.psd1) -Force
 Get-Command -Module CmdBrutPS | Select-Object Name
 ```
 
+---
+
 ## Quickstart
 
-### 1) Get TLDR pages (zip) and build the index
-
-Download TLDR as a zip and place it in the repo (recommended location):
+### 1) Download TLDR pages (zip) and build the local index
 
 ```powershell
 $dst = Join-Path (Resolve-Path .).Path "vendor\tldr\tldr.zip"
@@ -61,24 +77,28 @@ Find-CmdBrut net -Mode PowerShell -Top 10
 Get-CmdBrutDoc Get-Process -Mode PowerShell | Select-Object -First 40
 ```
 
-## Usage notes
+---
 
-### Auto mode
+## How mode selection works
 
 Both `Find-CmdBrut` and `Get-CmdBrutDoc` default to `-Mode Auto`:
 
 - If the input looks like `Verb-Noun` **and** exists locally, CmdBrutPS uses **PowerShell mode**.
 - Otherwise it uses **TLDR mode**.
 
-### Updating PowerShell help
+---
 
-If you want richer `Get-Help` output (examples, full docs), you can run this while online:
+## Updating PowerShell help (optional)
+
+If you want richer `Get-Help` output (examples, full docs), run this while online:
 
 ```powershell
 Update-Help
 ```
 
-CmdBrutPS will still work without it (you’ll just see partial help in some cases).
+CmdBrutPS still works without it (you’ll just see partial help in some cases).
+
+---
 
 ## Repo layout
 
@@ -98,25 +118,17 @@ vendor/
     tldr.zip              # optional local zip (recommended to .gitignore)
 ```
 
-## Roadmap
+---
 
-- Add Pester tests
+## Roadmap (short)
+
+- Pester tests
 - CI (GitHub Actions)
 - Distribution (PSGallery or a release zip)
-- Optional: split a separate “data + website” repo for hosted browsing
+- Optional: split “data + browser UI” into a separate repo (CmdBrutData)
 
-## ProjectUri (later)
-
-When you’re ready, add your GitHub URL to the manifest at:
-
-```powershell
-PrivateData = @{
-  PSData = @{
-    ProjectUri = 'https://github.com/<you>/<repo>'
-  }
-}
-```
+---
 
 ## Attribution
 
-TLDR content is sourced from the `tldr-pages/tldr` community project (when you download/build the local cache).
+TLDR content is sourced from the `tldr-pages/tldr` community project when you download/build the local cache.
